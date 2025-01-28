@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Task } from '../types';
 
 interface TaskStore {
@@ -7,28 +8,47 @@ interface TaskStore {
   toggleTask: (taskId: string) => void;
   updateTask: (taskId: string, updatedTask: Partial<Task>) => void;
   deleteTask: (taskId: string) => void;
+  loadTasks: () => Promise<void>;
 }
 
 export const useTaskStore = create<TaskStore>()((set) => ({
   tasks: [],
-  addTask: (task) =>
-    set((state) => ({
-      tasks: [...state.tasks, task],
-    })),
-  toggleTask: (taskId) =>
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
+  addTask: async (task) => {
+    set((state) => {
+      const newTasks = [...state.tasks, task];
+      AsyncStorage.setItem('tasks', JSON.stringify(newTasks));
+      return { tasks: newTasks };
+    });
+  },
+  toggleTask: async (taskId) => {
+    set((state) => {
+      const newTasks = state.tasks.map((task) =>
         task.id === taskId ? { ...task, isCompleted: !task.isCompleted } : task
-      ),
-    })),
-  updateTask: (taskId, updatedTask) =>
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
+      );
+      AsyncStorage.setItem('tasks', JSON.stringify(newTasks));
+      return { tasks: newTasks };
+    });
+  },
+  updateTask: async (taskId, updatedTask) => {
+    set((state) => {
+      const newTasks = state.tasks.map((task) =>
         task.id === taskId ? { ...task, ...updatedTask } : task
-      ),
-    })),
-  deleteTask: (taskId) =>
-    set((state) => ({
-      tasks: state.tasks.filter((task) => task.id !== taskId),
-    })),
+      );
+      AsyncStorage.setItem('tasks', JSON.stringify(newTasks));
+      return { tasks: newTasks };
+    });
+  },
+  deleteTask: async (taskId) => {
+    set((state) => {
+      const newTasks = state.tasks.filter((task) => task.id !== taskId);
+      AsyncStorage.setItem('tasks', JSON.stringify(newTasks));
+      return { tasks: newTasks };
+    });
+  },
+  loadTasks: async () => {
+    const storedTasks = await AsyncStorage.getItem('tasks');
+    if (storedTasks) {
+      set({ tasks: JSON.parse(storedTasks) });
+    }
+  },
 })); 

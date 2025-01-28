@@ -1,14 +1,16 @@
 export const Theme = {
   colors: {
-    primary: '#2196F3',
-    secondary: '#FF9800',
-    background: '#F5F5F5',
+    primary: '#4A90E2',
+    secondary: '#F5A623',
+    background: '#F8F9FA',
     surface: '#FFFFFF',
-    error: '#F44336',
-    warning: '#FFC107',
-    info: '#2196F3',
-    text: '#000000',
+    error: '#E74C3C',
+    warning: '#F1C40F',
+    info: '#3498DB',
+    text: '#2C3E50',
     white: '#FFFFFF',
+    textSecondary: '#7F8C8D',
+    divider: '#E0E0E0',
   },
   spacing: {
     xs: 4,
@@ -16,5 +18,28 @@ export const Theme = {
     md: 16,
     lg: 24,
     xl: 32,
+    xxl: 48,
+  },
+  radius: {
+    sm: 4,
+    md: 8,
+    lg: 16,
+    xl: 24,
+  },
+  elevation: {
+    small: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    medium: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 4,
+    },
   },
 }; 

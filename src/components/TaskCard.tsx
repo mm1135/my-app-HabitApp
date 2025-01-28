@@ -40,18 +40,19 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress, onComplete, onDelete
 
   return (
     <Swipeable renderRightActions={renderRightActions}>
-      <TouchableOpacity onPress={onPress}>
-        <View style={[styles.card, { borderColor }]}>
+      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+        <View style={[styles.card, { borderLeftColor: borderColor }]}>
           <Checkbox
             status={task.isCompleted ? 'checked' : 'unchecked'}
             onPress={onComplete}
+            color={Theme.colors.primary}
           />
           <View style={styles.content}>
-            <Text style={[
-              styles.text,
-              task.isCompleted && styles.completedText
-            ]}>
+            <Text style={[styles.text, task.isCompleted && styles.completedText]}>
               私は {task.when} {task.where} {task.what}
+            </Text>
+            <Text style={styles.priorityText}>
+              {task.priority === 'high' ? '🔴 高' : task.priority === 'medium' ? '🟡 中' : '🔵 低'}
             </Text>
           </View>
         </View>
@@ -63,30 +64,40 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress, onComplete, onDelete
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    padding: 16,
-    marginHorizontal: 16,
-    marginVertical: 8,
+    padding: Theme.spacing.md,
+    marginHorizontal: Theme.spacing.md,
+    marginVertical: Theme.spacing.sm,
     backgroundColor: Theme.colors.surface,
-    borderRadius: 8,
-    borderWidth: 2,
-    elevation: 2,
+    borderRadius: Theme.radius.md,
+    borderLeftWidth: 4,
+    ...Theme.elevation.small,
   },
   content: {
     flex: 1,
-    marginLeft: 16,
+    marginLeft: Theme.spacing.md,
   },
   text: {
     fontSize: 16,
+    color: Theme.colors.text,
+    marginBottom: Theme.spacing.xs,
+  },
+  priorityText: {
+    fontSize: 12,
+    color: Theme.colors.textSecondary,
   },
   rightActions: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: Theme.spacing.sm,
   },
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
     width: 80,
-    height: '100%',
+    height: '86%',
+    marginVertical: Theme.spacing.sm,
+    borderRadius: Theme.radius.md,
+    marginLeft: Theme.spacing.sm,
   },
   completeButton: {
     backgroundColor: Theme.colors.primary,

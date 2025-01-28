@@ -1,5 +1,6 @@
 export interface Task {
   id: string;
+  date: string; // YYYY-MM-DD形式
   when: string;
   where: string;
   what: string;
