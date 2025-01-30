@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { FAB, Text } from 'react-native-paper';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -7,6 +7,7 @@ import { useTaskStore } from '../stores/taskStore';
 import { Theme } from '../theme';
 import { RootStackParamList, Task } from '../types';
 import { timeSlots } from '../constants/time';
+import { VoiceService } from '../services/voiceService';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -17,6 +18,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const toggleTask = useTaskStore((state) => state.toggleTask);
   const deleteTask = useTaskStore((state) => state.deleteTask);
   const loadTasks = useTaskStore((state) => state.loadTasks);
+
+  const [isRecording, setIsRecording] = useState(false);
+  const voiceService = VoiceService.getInstance();
 
   React.useEffect(() => {
     loadTasks();
@@ -39,6 +43,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <Text style={styles.sectionTitle}>{timeSlot}</Text>
     </View>
   );
+
+  const handleVoiceInput = async () => {
+    if (isRecording) {
+      await voiceService.stopListening();
+      await voiceService.speak('音声入力を終了しました');
+    } else {
+      await voiceService.speak('音声入力を開始します');
+      await voiceService.startListening();
+    }
+    setIsRecording(!isRecording);
+  };
 
   return (
     <View style={styles.container}>
@@ -64,6 +79,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         onPress={() => navigation.navigate('AddTask')}
         color={Theme.colors.white}
         label="タスクを追加"
+      />
+      <FAB
+        style={[styles.voiceFab, { backgroundColor: isRecording ? Theme.colors.error : Theme.colors.primary }]}
+        icon={isRecording ? 'microphone-off' : 'microphone'}
+        onPress={handleVoiceInput}
+        color={Theme.colors.white}
       />
     </View>
   );
@@ -94,6 +115,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: Theme.colors.text,
+  },
+  voiceFab: {
+    position: 'absolute',
+    left: Theme.spacing.lg,
+    bottom: Theme.spacing.xxl,
+    borderRadius: Theme.radius.lg,
+    ...Theme.elevation.medium,
   },
 });
 
